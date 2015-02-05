@@ -90,4 +90,13 @@ function GJ.closeSession()
 	return string.find(req("sessions/close/?", "dump", true, true), "SUCCESS") ~= nil
 end
 
+-- data store
+function GJ.fetchData(key, isGlobal)
+	local pu, pt = true, true
+	if isGlobal then pu, pt = false, false end
+
+	local d = req("data-store/?key=" .. key, "dump", pu, pt)
+	return string.sub(d, string.find(d, "\n"), string.len(d))
+end
+
 return GJ
