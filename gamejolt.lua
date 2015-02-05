@@ -174,4 +174,15 @@ function GJ.fetchAllTrophies()
 	return handleTrophies("")
 end
 
+-- scores
+function GJ.addScore(score, desc, tableID, guestName, extraData)
+	local pu, pt, s = true, true, ""
+	if guestName then pu, pt = false, false, s .. "&guest=" .. guestName end
+
+	if extraData then s = s .. "&extra_data=" .. tostring(extraData) end
+	if tableID then s = s .. "&table_id=" .. tostring(tableID) end
+
+	return string.find(req("scores/add/?score=" .. tostring(desc) .. "&sort=" .. score .. s, "dump", pu, pt), "SUCCESS") ~= nil
+end
+
 return GJ
