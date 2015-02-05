@@ -52,6 +52,28 @@ function GJ.authUser(name, token)
 	return s
 end
 
+function GJ.fetchUserByName(name)
+	local r = req("users/?username=" .. name, "keypair", false, false)
+
+	local t = {}
+	parseKeypair(r, function(k, v)
+		t[k] = v
+	end)
+	
+	return t
+end
+
+function GJ.fetchUserByID(id)
+	local r = req("users/?user_id=" .. id, "keypair", false, false)
+
+	local t = {}
+	parseKeypair(r, function(k, v)
+		t[k] = v
+	end)
+	
+	return t
+end
+
 -- sessions
 function GJ.openSession()
 	return string.find(req("sessions/open/?", "dump", true, true), "SUCCESS") ~= nil
