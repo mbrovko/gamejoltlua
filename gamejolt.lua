@@ -135,4 +135,9 @@ function GJ.fetchStorageKeys(isGlobal)
 	return t
 end
 
+-- trophies
+function GJ.giveTrophy(id)
+	return string.find(req("trophies/add-achieved/?trophy_id=" .. tostring(id), "dump", true, true), "SUCCESS") ~= nil
+end
+
 return GJ
