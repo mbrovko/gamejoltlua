@@ -21,7 +21,7 @@ local function req(s, f, pu, pt)
 	return r
 end
 
-function parseKeypair(s, on)
+local function parseKeypair(s, on)
 	local c, len = 0, string.len(s)
 	local b, k, v
 
@@ -32,9 +32,25 @@ function parseKeypair(s, on)
 		c = b + 2
 		b = string.find(s, '"', c)
 		v = string.sub(s, c, b - 1)
-		c = b + 2
+		c = b + 3
 		on(k, v)
 	end
+end
+
+local function handleTrophies(str)
+	local d = req("trophies/?" .. str, "keypair", true, true)
+	local t, f = {}
+
+	parseKeypair(d, function(k, v)
+		if k ~= "success" then
+			if k == "id" then
+				f = {}
+				table.insert(t, f)
+			end
+			f[k] = v
+		end
+	end)
+	return t
 end
 
 function GJ.init(id, key)
@@ -138,6 +154,24 @@ end
 -- trophies
 function GJ.giveTrophy(id)
 	return string.find(req("trophies/add-achieved/?trophy_id=" .. tostring(id), "dump", true, true), "SUCCESS") ~= nil
+end
+
+function GJ.fetchTrophy(id)
+	local d = req("trophies/?trophy_id=" .. tostring(id), "keypair", true, true)
+
+	local t = {}
+	parseKeypair(d, function(k, v)
+		if k ~= "success" then t[k] = v end
+	end)
+	return t
+end
+
+function GJ.fetchTrophiesByStatus(achieved)
+	return handleTrophies("achieved=" .. tostring(achieved))
+end
+
+function GJ.fetchAllTrophies()
+	return handleTrophies("")
 end
 
 return GJ
