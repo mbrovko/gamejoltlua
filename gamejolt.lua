@@ -121,4 +121,18 @@ function GJ.removeData(key, isGlobal)
 	return string.find(req("data-store/remove/?key=" .. key, "dump", pu, pt), "SUCCESS") ~= nil
 end
 
+function GJ.fetchStorageKeys(isGlobal)
+	local pu, pt = true, true
+	if isGlobal then pu, pt = false, false end
+
+	local d = req("data-store/get-keys/?", "keypair", pu, pt)
+
+	local t = {}
+	parseKeypair(d, function(k, v)
+		if k ~= "success" then table.insert(t, v) end
+	end)
+
+	return t
+end
+
 return GJ
