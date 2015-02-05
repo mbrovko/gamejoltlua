@@ -21,6 +21,22 @@ local function req(s, f, pu, pt)
 	return r
 end
 
+function parseKeypair(s, on)
+	local c, len = 0, string.len(s)
+	local b, k, v
+
+	while c < len do
+		b = string.find(s, ":", c)
+		if b == nil then break end
+		k = string.sub(s, c, b - 1)
+		c = b + 2
+		b = string.find(s, '"', c)
+		v = string.sub(s, c, b - 1)
+		c = b + 2
+		on(k, v)
+	end
+end
+
 function GJ.init(id, key)
 	GJ.gameID = id
 	GJ.gameKey = key
