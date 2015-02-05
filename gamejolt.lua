@@ -41,4 +41,11 @@ function GJ.openSession()
 	return string.find(req("sessions/open/?", "dump", true, true), "SUCCESS") ~= nil
 end
 
+function GJ.pingSession(active)
+	local status = "idle"
+	if active then status = "active" end
+
+	return string.find(req("sessions/open/?status=" .. status, "dump", true, true), "SUCCESS") ~= nil
+end
+
 return GJ
