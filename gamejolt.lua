@@ -185,4 +185,23 @@ function GJ.addScore(score, desc, tableID, guestName, extraData)
 	return string.find(req("scores/add/?score=" .. tostring(desc) .. "&sort=" .. score .. s, "dump", pu, pt), "SUCCESS") ~= nil
 end
 
+function GJ.fetchScores(limit, tableID)
+	local pu, pt, s = true, true, ""
+	if tableID then pu, pt, s = false, false, "&table_id=" .. tostring(tableID) end
+
+	local d = req("scores/?limit=" .. tostring(limit) .. s, "keypair", pu, pt)
+	local t, f = {}
+
+	parseKeypair(d, function(k, v)
+		if k ~= "success" then
+			if k == "score" then
+				f = {}
+				table.insert(t, f)
+			end
+			f[k] = v
+		end
+	end)
+	return t
+end
+
 return GJ
