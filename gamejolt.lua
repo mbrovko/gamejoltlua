@@ -114,4 +114,11 @@ function GJ.updateData(key, value, operation, isGlobal)
 	return string.sub(d, string.find(d, "\n"), string.len(d))
 end
 
+function GJ.removeData(key, isGlobal)
+	local pu, pt = true, true
+	if isGlobal then pu, pt = false, false end
+
+	return string.find(req("data-store/remove/?key=" .. key, "dump", pu, pt), "SUCCESS") ~= nil
+end
+
 return GJ
