@@ -204,4 +204,20 @@ function GJ.fetchScores(limit, tableID)
 	return t
 end
 
+function GJ.fetchTables()
+	local d = req("scores/tables/?", "keypair", false, false)
+	local t, f = {}
+
+	parseKeypair(d, function(k, v)
+		if k ~= "success" then
+			if k == "id" then
+				f = {}
+				table.insert(t, f)
+			end
+			f[k] = v
+		end
+	end)
+	return t
+end
+
 return GJ
