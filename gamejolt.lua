@@ -106,4 +106,12 @@ function GJ.setData(key, data, isGlobal)
 	return string.find(req("data-store/set/?key=" .. key .. "&data=" .. tostring(data), "dump", pu, pt), "SUCCESS") ~= nil
 end
 
+function GJ.updateData(key, value, operation, isGlobal)
+	local pu, pt = true, true
+	if isGlobal then pu, pt = false, false end
+
+	local d = req("data-store/update/?key=" .. key .. "&operation=" .. operation .. "&value=" .. tostring(value), "dump", pu, pt)
+	return string.sub(d, string.find(d, "\n"), string.len(d))
+end
+
 return GJ
