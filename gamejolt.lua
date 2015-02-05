@@ -36,4 +36,9 @@ function GJ.authUser(name, token)
 	return s
 end
 
+-- sessions
+function GJ.openSession()
+	return string.find(req("sessions/open/?", "dump", true, true), "SUCCESS") ~= nil
+end
+
 return GJ
