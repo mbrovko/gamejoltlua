@@ -45,7 +45,7 @@ interface GameJolt {
 	static function fetchTables():Array<TableInfo>;
 }
 ```
-Visit [docs](http://gamejolt.com/api/doc/game/) for more information.
+Visit [wiki](https://github.com/insweater/gamejoltlua/wiki) / [docs](http://gamejolt.com/api/doc/game/) for more information.
 
 # Credits
 GameJolt.lua is using kikito's [MD5](https://github.com/kikito/md5.lua) and [LuaSocket](http://w3.impa.br/~diego/software/luasocket/home.html).
