@@ -1,5 +1,6 @@
-local md5 = require "md5" 
-local http = require "socket.http"
+local folder = (...):gsub('%.init$', '')
+local md5 = require(folder .. ".md5" )
+local http = require("socket.http")
 
 local GJ = {
 	gameID, gameKey,
@@ -75,7 +76,7 @@ function GJ.fetchUserByName(name)
 	parseKeypair(r, function(k, v)
 		t[k] = v
 	end)
-	
+
 	return t
 end
 
@@ -86,7 +87,7 @@ function GJ.fetchUserByID(id)
 	parseKeypair(r, function(k, v)
 		t[k] = v
 	end)
-	
+
 	return t
 end
 
