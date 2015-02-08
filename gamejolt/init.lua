@@ -54,15 +54,29 @@ local function handleTrophies(str)
 	return t
 end
 
-function GJ.init(id, key)
+function GJ.init(id, key, args)
 	GJ.gameID = id
 	GJ.gameKey = key
+	
+	if args and type(args)=="table" then
+		for k,v in pairs(args) do
+			local a = v:match("^gjapi_(.*)")
+			if a then
+				key, value = a:match("^(.-)=(.-)$")
+				if key == "username" then
+					GJ.username = value
+				elseif key == "token" then
+					GJ.userToken = value
+				end
+			end
+		end
+	end
 end
 
 -- users
 function GJ.authUser(name, token)
-	GJ.username = name
-	GJ.userToken = token
+	GJ.username = name or GJ.username
+	GJ.userToken = token or GJ.userToken
 
 	local s = string.find(req("users/auth/?", "dump", true, true), "SUCCESS") ~= nil
 	GJ.isLoggedIn = s
