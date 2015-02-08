@@ -1,4 +1,4 @@
-local folder = (...):gsub('%.init$', '')
+local folder = {...}[1]:gsub('%.init$', '')
 local md5 = require(folder .. ".md5" )
 local http = require("socket.http")
 
@@ -71,12 +71,30 @@ function GJ.init(id, key, args)
 			end
 		end
 	end
+	
+	if GJ.username and GJ.userToken then
+		return true
+	else
+		return false
+	end
+end
+
+function GJ.getCredentials()
+	local a = love.system.getOS() == "Windows" and "\\" or "/"
+	local f = io.open(love.filesystem.getWorkingDirectory()..a.."gjapi-credentials.txt")
+	if f then
+		GJ.username = f:read()
+		GJ.userToken = f:read()
+		return true
+	else
+		return false
+	end
 end
 
 -- users
 function GJ.authUser(name, token)
-	GJ.username = name or GJ.username
-	GJ.userToken = token or GJ.userToken
+	GJ.username = name or GJ.username or "" --Here we could put LÖVE default ones
+	GJ.userToken = token or GJ.userToken or ""
 
 	local s = string.find(req("users/auth/?", "dump", true, true), "SUCCESS") ~= nil
 	GJ.isLoggedIn = s
