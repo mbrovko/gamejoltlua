@@ -62,8 +62,10 @@ function GJ.init(id, key, args)
 	if args and type(args)=="table" then
 		for k,v in pairs(args) do
 			local a = v:match("^gjapi_(.*)")
+
 			if a then
 				key, value = a:match("^(.-)=(.-)$")
+
 				if key == "username" then
 					GJ.username = value
 				elseif key == "token" then
@@ -71,18 +73,6 @@ function GJ.init(id, key, args)
 				end
 			end
 		end
-	end
-
-	if id and key then --Not sure about this huge check
-		if not args then
-			return true
-		elseif GJ.username and GJ.userToken then
-			return true
-		else
-			return false, "Username or token not found on args"
-		end
-	else
-		return false, "Game Id or Game Key was nil"
 	end
 end
 
@@ -95,7 +85,7 @@ function GJ.getCredentials()
 		GJ.userToken = f:read()
 		return true, GJ.username, GJ.userToken
 	else
-		return false, "Couldnt read file"
+		return false, "Couldn't find, open or read the \"gjapi-credentials.txt\" file"
 	end
 end
 
