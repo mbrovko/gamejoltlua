@@ -57,7 +57,7 @@ end
 function GJ.init(id, key, args)
 	GJ.gameID = id
 	GJ.gameKey = key
-	
+
 	if args and type(args)=="table" then
 		for k,v in pairs(args) do
 			local a = v:match("^gjapi_(.*)")
@@ -71,23 +71,30 @@ function GJ.init(id, key, args)
 			end
 		end
 	end
-	
-	if GJ.username and GJ.userToken then
-		return true
+
+	if id and key then --Not sure about this huge check
+		if not args then
+			return true
+		elseif GJ.username and GJ.userToken then
+			return true
+		else
+			return false, "Username or token not found on args"
+		end
 	else
-		return false
+		return false, "Game Id or Game Key was nil"
 	end
 end
 
 function GJ.getCredentials()
 	local a = love.system.getOS() == "Windows" and "\\" or "/"
 	local f = io.open(love.filesystem.getWorkingDirectory()..a.."gjapi-credentials.txt")
+
 	if f then
 		GJ.username = f:read()
 		GJ.userToken = f:read()
-		return true
+		return true, GJ.username, GJ.userToken
 	else
-		return false
+		return false, "Couldnt read file"
 	end
 end
 
