@@ -6,6 +6,7 @@ local GJ = {
 	gameID, gameKey,
 	isLoggedIn = false,
 	username, userToken
+	trophies = {}
 }
 
 local BASE_URL = "http://gamejolt.com/api/game/v1/"
@@ -193,7 +194,9 @@ end
 
 -- trophies
 function GJ.giveTrophy(id)
-	return string.find(req("trophies/add-achieved/?trophy_id=" .. tostring(id), "dump", true, true), "SUCCESS") ~= nil
+	local s = string.find(req("trophies/add-achieved/?trophy_id=" .. tostring(id), "dump", true, true), "SUCCESS") ~= nil
+	GJ.fetchAllTrophies(true)
+	return
 end
 
 function GJ.fetchTrophy(id)
@@ -210,8 +213,11 @@ function GJ.fetchTrophiesByStatus(achieved)
 	return handleTrophies("achieved=" .. tostring(achieved))
 end
 
-function GJ.fetchAllTrophies()
-	return handleTrophies("")
+function GJ.fetchAllTrophies(f)
+	if f then
+		GJ.trophies = handleTrophies("")
+	end
+	return GJ.trophies
 end
 
 -- scores
