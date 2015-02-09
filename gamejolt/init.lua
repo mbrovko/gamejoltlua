@@ -1,17 +1,17 @@
-local folder = {...}[1]:gsub('%.init$', '')
+local folder = ({...})[1]:gsub('%.init$', '')
 local md5 = require(folder .. ".md5" )
 local http = require("socket.http")
 
 local GJ = {
 	gameID, gameKey,
 	isLoggedIn = false,
-	username, userToken
+	username, userToken,
 	trophies = {}
 }
 
 local BASE_URL = "http://gamejolt.com/api/game/v1/"
 
-local function req(s, f, pu, pt)
+local function req(s, f, pu, pt, data)
 	local url = BASE_URL .. s .. "&game_id=" .. tostring(GJ.gameID) .. "&format=" .. f
 	if pu then url = url .. "&username=" .. GJ.username end
 	if pt then url = url .. "&user_token=" .. GJ.userToken end
@@ -19,7 +19,7 @@ local function req(s, f, pu, pt)
 	local b = md5.sumhexa(url .. GJ.gameKey)
 	url = url .. "&signature=" .. b
 
-	local r, e = http.request(url)
+	local r, e = http.request(url, data) --POST request if needed
 	return r
 end
 
@@ -83,6 +83,9 @@ function GJ.getCredentials()
 	if f then
 		GJ.username = f:read()
 		GJ.userToken = f:read()
+	end
+
+	if GJ.username and GJ.userToken then
 		return true, GJ.username, GJ.userToken
 	else
 		return false, "Couldn't find, open or read the \"gjapi-credentials.txt\" file"
@@ -150,7 +153,7 @@ function GJ.setData(key, data, isGlobal)
 	local pu, pt = true, true
 	if isGlobal then pu, pt = false, false end
 
-	return string.find(req("data-store/set/?key=" .. key .. "&data=" .. tostring(data), "dump", pu, pt), "SUCCESS") ~= nil
+	return string.find(req("data-store/set/?key=" .. key, "dump", pu, pt, "data="..tostring(data)), "SUCCESS") ~= nil
 end
 
 function GJ.updateData(key, value, operation, isGlobal)
