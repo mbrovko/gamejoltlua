@@ -11,8 +11,14 @@ local GJ = {
 
 local BASE_URL = "http://gamejolt.com/api/game/v1/"
 
+local escape = function (a)
+	return tostring(a):gsub("([^%w%-%.%_])",function (a)
+		return string.format("%%%02X",string.byte(a))
+	end)
+end
+
 local function req(s, f, pu, pt, data)
-	local url = BASE_URL .. s .. "&game_id=" .. tostring(GJ.gameID) .. "&format=" .. f
+	local url = BASE_URL .. s .. "&game_id=" .. GJ.gameID .. "&format=" .. f
 	if pu then url = url .. "&username=" .. GJ.username end
 	if pt then url = url .. "&user_token=" .. GJ.userToken end
 
@@ -145,7 +151,8 @@ function GJ.fetchData(key, isGlobal)
 	local pu, pt = true, true
 	if isGlobal then pu, pt = false, false end
 
-	local d = req("data-store/?key=" .. key, "dump", pu, pt)
+	local d = req("data-store/?key=" .. escape(key), "dump", pu, pt)
+
 	return string.sub(d, string.find(d, "\n"), string.len(d))
 end
 
@@ -153,14 +160,21 @@ function GJ.setData(key, data, isGlobal)
 	local pu, pt = true, true
 	if isGlobal then pu, pt = false, false end
 
-	return string.find(req("data-store/set/?key=" .. key, "dump", pu, pt, "data="..tostring(data)), "SUCCESS") ~= nil
+	return string.find(req("data-store/set/?key=" .. escape(key) .. '&data=' .. escape(data), "dump", pu, pt), "SUCCESS") ~= nil
+end
+
+function GJ.setBigData(key, data, isGlobal)
+	local pu, pt = true, true
+	if isGlobal then pu, pt = false, false end
+
+	return string.find(req("data-store/set/?key=" .. escape(key), "dump", pu, pt, "data="..escape(data)), "SUCCESS") ~= nil
 end
 
 function GJ.updateData(key, value, operation, isGlobal)
 	local pu, pt = true, true
 	if isGlobal then pu, pt = false, false end
 
-	local d = req("data-store/update/?key=" .. key .. "&operation=" .. operation .. "&value=" .. tostring(value), "dump", pu, pt)
+	local d = req("data-store/update/?key=" .. escape(key) .. "&operation=" .. operation .. "&value=" .. escape(value), "dump", pu, pt)
 	return string.sub(d, string.find(d, "\n"), string.len(d))
 end
 
@@ -168,7 +182,7 @@ function GJ.removeData(key, isGlobal)
 	local pu, pt = true, true
 	if isGlobal then pu, pt = false, false end
 
-	return string.find(req("data-store/remove/?key=" .. key, "dump", pu, pt), "SUCCESS") ~= nil
+	return string.find(req("data-store/remove/?key=" .. escape(key), "dump", pu, pt), "SUCCESS") ~= nil
 end
 
 function GJ.fetchStorageKeys(isGlobal)
@@ -187,13 +201,13 @@ end
 
 -- trophies
 function GJ.giveTrophy(id)
-	local s = string.find(req("trophies/add-achieved/?trophy_id=" .. tostring(id), "dump", true, true), "SUCCESS") ~= nil
+	local s = string.find(req("trophies/add-achieved/?trophy_id=" .. id, "dump", true, true), "SUCCESS") ~= nil
 	GJ.fetchAllTrophies(true)
 	return
 end
 
 function GJ.fetchTrophy(id)
-	local d = req("trophies/?trophy_id=" .. tostring(id), "keypair", true, true)
+	local d = req("trophies/?trophy_id=" .. id, "keypair", true, true)
 
 	local t = {}
 	parseKeypair(d, function(k, v)
@@ -203,7 +217,7 @@ function GJ.fetchTrophy(id)
 end
 
 function GJ.fetchTrophiesByStatus(achieved)
-	return handleTrophies("achieved=" .. tostring(achieved))
+	return handleTrophies("achieved=" .. (achieved and "true" or "false"))
 end
 
 function GJ.fetchAllTrophies(f)
@@ -216,19 +230,19 @@ end
 -- scores
 function GJ.addScore(score, desc, tableID, guestName, extraData)
 	local pu, pt, s = true, true, ""
-	if guestName then pu, pt = false, false, s .. "&guest=" .. guestName end
+	if guestName then pu, pt = false, false, s .. "&guest=" .. escape(guestName) end
 
-	if extraData then s = s .. "&extra_data=" .. tostring(extraData) end
-	if tableID then s = s .. "&table_id=" .. tostring(tableID) end
+	if extraData then s = s .. "&extra_data=" .. escape(extraData) end
+	if tableID then s = s .. "&table_id=" .. escape(tableID) end
 
-	return string.find(req("scores/add/?score=" .. tostring(desc) .. "&sort=" .. score .. s, "dump", pu, pt), "SUCCESS") ~= nil
+	return string.find(req("scores/add/?score=" .. escape(desc) .. "&sort=" .. score .. s, "dump", pu, pt), "SUCCESS") ~= nil
 end
 
 function GJ.fetchScores(limit, tableID)
 	local pu, pt, s = true, true, ""
-	if tableID then pu, pt, s = false, false, "&table_id=" .. tostring(tableID) end
+	if tableID then pu, pt, s = false, false, "&table_id=" .. escape(tableID) end
 
-	local d = req("scores/?limit=" .. tostring(limit) .. s, "keypair", pu, pt)
+	local d = req("scores/?limit=" .. limit .. s, "keypair", pu, pt)
 	local t, f = {}
 
 	parseKeypair(d, function(k, v)
