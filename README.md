@@ -34,6 +34,7 @@ interface GameJolt {
 	// data store
 	static function fetchData(key:String, ?isGlobal:Bool):Dynamic;
 	static function setData(key:String, data:Dynamic, ?isGlobal:Bool):Bool;
+	static function setBigData(key:String, data:Dynamic, ?isGlobal:Bool):Bool;
 	static function updateData(key:String, value:String, operation:String, ?isGlobal:Bool):String;
 	static function removeData(key:String, ?isGlobal:Bool):Bool;
 	static function fetchStorageKeys(?isGlobal:Bool):Array<String>;
