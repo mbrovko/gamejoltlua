@@ -202,7 +202,7 @@ end
 function GJ.giveTrophy(id)
 	local s = string.find(req("trophies/add-achieved/?trophy_id=" .. id, "dump", true, true), "SUCCESS") ~= nil
 	GJ.fetchAllTrophies(true)
-	return
+	return s
 end
 
 function GJ.fetchTrophy(id)
