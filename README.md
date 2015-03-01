@@ -18,12 +18,15 @@ Haxe-styled interface for GameJolt module:
 
 ```haxe
 interface GameJolt {
+	static var username:String;
+	static var userToken:String;
 	static var isLoggedIn:Bool;
-	static function init(id:Int, key:String):Void;
+	static function init(id:Int, key:String, ?args:Dynamic):Void;
 	// users
 	static function authUser(name:String, token:String):Bool;
 	static function fetchUserByName(name:String):UserInfo;
 	static function fetchUserByID(id:Int):UserInfo;
+	static function getCredentials(dir:String):Dynamic;
 	// sessions
 	static function openSession():Bool;
 	static function pingSession(active:Bool):Bool;
@@ -51,5 +54,5 @@ Visit [wiki](https://github.com/insweater/gamejoltlua/wiki) / [docs](http://game
 GameJolt.lua is using kikito's [MD5](https://github.com/kikito/md5.lua) and [LuaSocket](http://w3.impa.br/~diego/software/luasocket/home.html).
 
 # License (MIT)
-Copyright (c) 2015 insweater
+Copyright (c) 2015 [@insweater](http://github.com/insweater), [@Positive07](http://github.com/Positive07) and team.  
 This library is released under the [MIT](http://opensource.org/licenses/MIT) license.
