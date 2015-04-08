@@ -229,7 +229,7 @@ end
 -- scores
 function GJ.addScore(score, desc, tableID, guestName, extraData)
 	local pu, pt, s = true, true, ""
-	if guestName then pu, pt = false, false, s .. "&guest=" .. escape(guestName) end
+	if guestName then pu, pt, s = false, false, s .. "&guest=" .. escape(guestName) end
 
 	if extraData then s = s .. "&extra_data=" .. escape(extraData) end
 	if tableID then s = s .. "&table_id=" .. escape(tableID) end
