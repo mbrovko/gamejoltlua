@@ -1,6 +1,10 @@
 # GameJolt.lua
 Provides access to GameJolt's services for Lua-based projects.
 
+# Projects using gamejolt.lua
+[One Bit Arena](http://gamejolt.com/games/one-bit-arena/41484)   
+[Random Rooms](http://gamejolt.com/games/random-rooms/85035)
+
 # Usage
 Put the files from the repo into your app's folder.
 
